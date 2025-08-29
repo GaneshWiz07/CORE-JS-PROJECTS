@@ -11,10 +11,10 @@ const Cart = ["Shoes", "T-shirt", "Pant", "Jacket"];
 createOrder(Cart)
     .then((orderId) => {
         console.log("✅ Order created successfully with ID:", orderId);
-        return orderId;
+    return orderId;
     })
     .then((orderId) => {
-        return proceedToPayment(orderId);
+    return proceedToPayment(orderId);
     })
     .then((paymentId) => {
         console.log("✅ Payment completed with ID:", paymentId);

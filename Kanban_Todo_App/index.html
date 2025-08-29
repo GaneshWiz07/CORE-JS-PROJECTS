@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Todo Board - DOM Events & Drag API Tutorial</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 
+    ========================================
+    KANBAN BOARD - LEARNING DOM EVENTS & DRAG API
+    ========================================
+    
+    This app demonstrates:
+    1. DOM Events: click, load, submit, change, input
+    2. Event Bubbling & Capturing
+    3. Drag and Drop API
+    4. State Management & Synchronization
+    5. Event Delegation
+    6. Custom Events
+    -->
+    
+    <div class="container">
+        <header class="app-header">
+            <h1>🎯 Kanban Todo Board</h1>
+            <p>Learn DOM Events, Drag API & State Management</p>
+            
+            <!-- EVENT DEMO: click, change events -->
+            <div class="controls">
+                <button id="addTaskBtn" class="btn btn-primary">
+                    ➕ Add New Task
+                </button>
+                <button id="toggleThemeBtn" class="btn btn-secondary">
+                    🎨 Toggle Theme
+                </button>
+                <button id="clearAllBtn" class="btn btn-danger">
+                    🗑️ Clear All
+                </button>
+            </div>
+        </header>
+
+        <!-- EVENT DEMO: Event Bubbling/Capturing Visualization -->
+        <div class="event-demo-section">
+            <h3>🔍 Event Bubbling & Capturing Demo</h3>
+            <div id="eventDemoContainer" class="event-demo-container">
+                <div id="outerDiv" class="event-box outer">
+                    Outer Div (Grandparent)
+                    <div id="middleDiv" class="event-box middle">
+                        Middle Div (Parent)
+                        <div id="innerDiv" class="event-box inner">
+                            Inner Div (Child) - Click Me!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="event-log">
+                <h4>Event Log:</h4>
+                <div id="eventLog"></div>
+                <button id="clearLogBtn" class="btn btn-small">Clear Log</button>
+            </div>
+        </div>
+
+        <!-- MAIN KANBAN BOARD -->
+        <main class="kanban-board" id="kanbanBoard">
+            <!-- 
+            DRAG & DROP ZONES
+            Each column is a drop zone that can accept draggable tasks
+            -->
+            <div class="kanban-column" data-status="todo">
+                <div class="column-header">
+                    <h2>📋 To Do</h2>
+                    <span class="task-count" id="todoCount">0</span>
+                </div>
+                <div class="task-list" id="todoList" data-column="todo">
+                    <!-- Tasks will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="kanban-column" data-status="in-progress">
+                <div class="column-header">
+                    <h2>⚡ In Progress</h2>
+                    <span class="task-count" id="inProgressCount">0</span>
+                </div>
+                <div class="task-list" id="inProgressList" data-column="in-progress">
+                    <!-- Tasks will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="kanban-column" data-status="done">
+                <div class="column-header">
+                    <h2>✅ Done</h2>
+                    <span class="task-count" id="doneCount">0</span>
+                </div>
+                <div class="task-list" id="doneList" data-column="done">
+                    <!-- Tasks will be dynamically added here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- MODAL FOR ADDING/EDITING TASKS -->
+        <!-- EVENT DEMO: submit, change, input events -->
+        <div id="taskModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Add New Task</h3>
+                    <span class="close" id="closeModal">&times;</span>
+                </div>
+                
+                <form id="taskForm" class="task-form">
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title:</label>
+                        <input 
+                            type="text" 
+                            id="taskTitle" 
+                            name="title" 
+                            required 
+                            placeholder="Enter task title..."
+                            maxlength="100"
+                        >
+                        <div class="char-counter">
+                            <span id="titleCharCount">0</span>/100
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDescription">Description:</label>
+                        <textarea 
+                            id="taskDescription" 
+                            name="description" 
+                            rows="4" 
+                            placeholder="Enter task description..."
+                            maxlength="500"
+                        ></textarea>
+                        <div class="char-counter">
+                            <span id="descCharCount">0</span>/500
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskPriority">Priority:</label>
+                        <select id="taskPriority" name="priority">
+                            <option value="low">🟢 Low</option>
+                            <option value="medium" selected>🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskCategory">Category:</label>
+                        <input 
+                            type="text" 
+                            id="taskCategory" 
+                            name="category" 
+                            placeholder="e.g., Work, Personal, Study..."
+                            list="categoryList"
+                        >
+                        <datalist id="categoryList">
+                            <option value="Work">
+                            <option value="Personal">
+                            <option value="Study">
+                            <option value="Health">
+                            <option value="Finance">
+                        </datalist>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            💾 Save Task
+                        </button>
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">
+                            ❌ Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- FOOTER WITH STATISTICS -->
+        <footer class="app-footer">
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Tasks:</span>
+                    <span id="totalTasks" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Completed:</span>
+                    <span id="completedTasks" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Completion Rate:</span>
+                    <span id="completionRate" class="stat-value">0%</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 
+    LEARNING RESOURCES PANEL
+    Toggle-able panel with explanations of concepts
+    -->
+    <div id="learningPanel" class="learning-panel">
+        <button id="toggleLearningPanel" class="learning-toggle">
+            📚 Learning Guide
+        </button>
+        <div class="learning-content">
+            <h3>🎓 Concepts Demonstrated</h3>
+            
+            <div class="concept-section">
+                <h4>🖱️ DOM Events</h4>
+                <ul>
+                    <li><strong>click:</strong> Button clicks, task interactions</li>
+                    <li><strong>submit:</strong> Form submission handling</li>
+                    <li><strong>change:</strong> Select dropdown changes</li>
+                    <li><strong>input:</strong> Real-time text input tracking</li>
+                    <li><strong>load:</strong> Page initialization</li>
+                </ul>
+            </div>
+
+            <div class="concept-section">
+                <h4>🎯 Event Bubbling & Capturing</h4>
+                <ul>
+                    <li><strong>Bubbling:</strong> Events travel up the DOM tree</li>
+                    <li><strong>Capturing:</strong> Events travel down first</li>
+                    <li><strong>Event Delegation:</strong> Handle events on parent elements</li>
+                    <li><strong>stopPropagation():</strong> Stop event from bubbling</li>
+                </ul>
+            </div>
+
+            <div class="concept-section">
+                <h4>🤏 Drag & Drop API</h4>
+                <ul>
+                    <li><strong>dragstart:</strong> When drag begins</li>
+                    <li><strong>dragover:</strong> When dragged over drop zone</li>
+                    <li><strong>drop:</strong> When item is dropped</li>
+                    <li><strong>dataTransfer:</strong> Data passed during drag</li>
+                </ul>
+            </div>
+
+            <div class="concept-section">
+                <h4>🔄 State Management</h4>
+                <ul>
+                    <li><strong>Application State:</strong> Central data store</li>
+                    <li><strong>State Synchronization:</strong> Keep UI in sync with data</li>
+                    <li><strong>Local Storage:</strong> Persist data between sessions</li>
+                    <li><strong>Custom Events:</strong> Notify components of changes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
