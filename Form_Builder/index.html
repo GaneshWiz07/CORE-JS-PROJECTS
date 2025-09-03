@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Form Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Dynamic Form Builder</h1>
+           
+            <p>Demonstrating Config-driven UI, JSON Schema, Dynamic Rendering & Object Mutation</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Form Designer Panel -->
+            <div class="designer-panel">
+                <h2>Form Designer</h2>
+                
+                <div class="component-palette">
+                    <h3>Components</h3>
+                    <div class="palette-grid">
+                        <div class="component-item" data-type="text">
+                            <span class="icon">📝</span>
+                            <span>Text Input</span>
+                        </div>
+                        <div class="component-item" data-type="email">
+                            <span class="icon">📧</span>
+                            <span>Email</span>
+                        </div>
+                        <div class="component-item" data-type="number">
+                            <span class="icon">🔢</span>
+                            <span>Number</span>
+                        </div>
+                        <div class="component-item" data-type="select">
+                            <span class="icon">📋</span>
+                            <span>Select</span>
+                        </div>
+                        <div class="component-item" data-type="checkbox">
+                            <span class="icon">☑️</span>
+                            <span>Checkbox</span>
+                        </div>
+                        <div class="component-item" data-type="radio">
+                            <span class="icon">🔘</span>
+                            <span>Radio</span>
+                        </div>
+                        <div class="component-item" data-type="textarea">
+                            <span class="icon">📄</span>
+                            <span>Textarea</span>
+                        </div>
+                        <div class="component-item" data-type="date">
+                            <span class="icon">📅</span>
+                            <span>Date</span>
+                        </div>
+                        <div class="component-item" data-type="file">
+                            <span class="icon">📎</span>
+                            <span>File Upload</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button id="clearForm" class="btn btn-secondary">Clear Form</button>
+                    <button id="loadTemplate" class="btn btn-primary">Load Template</button>
+                    <button id="exportSchema" class="btn btn-success">Export Schema</button>
+                </div>
+
+                <div class="templates-section">
+                    <h3>Quick Templates</h3>
+                    <div class="template-buttons">
+                        <button class="template-btn" data-template="contact">Contact Form</button>
+                        <button class="template-btn" data-template="survey">Survey Form</button>
+                        <button class="template-btn" data-template="registration">Registration</button>
+                        <button class="template-btn" data-template="feedback">Feedback</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Canvas -->
+            <div class="canvas-panel">
+                <h2>Form Canvas</h2>
+                <div class="canvas-toolbar">
+                    <button id="previewMode" class="btn btn-outline">Preview Mode</button>
+                    <button id="designMode" class="btn btn-outline active">Design Mode</button>
+                    <span class="component-count">Components: <span id="componentCount">0</span></span>
+                </div>
+                
+                <div class="form-canvas" id="formCanvas">
+                    <div class="drop-zone">
+                        <div class="drop-placeholder">
+                            <span class="icon">🎯</span>
+                            <p>Drag components here to build your form</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Properties Panel -->
+            <div class="properties-panel">
+                <h2>Properties</h2>
+                <div class="properties-content" id="propertiesContent">
+                    <div class="no-selection">
+                        <span class="icon">👆</span>
+                        <p>Select a component to edit properties</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schema & Output Panel -->
+        <div class="output-panel">
+            <div class="output-tabs">
+                <button class="tab-btn active" data-tab="schema">JSON Schema</button>
+                <button class="tab-btn" data-tab="config">Form Config</button>
+                <button class="tab-btn" data-tab="data">Form Data</button>
+                <button class="tab-btn" data-tab="mutations">Mutations Log</button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="schemaTab">
+                    <div class="code-header">
+                        <span>Generated JSON Schema</span>
+                        <button id="copySchema" class="btn btn-small">Copy</button>
+                    </div>
+                    <pre id="schemaOutput">{}</pre>
+                </div>
+                
+                <div class="tab-pane" id="configTab">
+                    <div class="code-header">
+                        <span>Form Configuration</span>
+                        <button id="copyConfig" class="btn btn-small">Copy</button>
+                    </div>
+                    <pre id="configOutput">{}</pre>
+                </div>
+                
+                <div class="tab-pane" id="dataTab">
+                    <div class="code-header">
+                        <span>Form Data (Live)</span>
+                        <button id="copyData" class="btn btn-small">Copy</button>
+                    </div>
+                    <pre id="dataOutput">{}</pre>
+                </div>
+                
+                <div class="tab-pane" id="mutationsTab">
+                    <div class="code-header">
+                        <span>Object Mutations Log</span>
+                        <button id="clearMutations" class="btn btn-small">Clear</button>
+                    </div>
+                    <div id="mutationsOutput" class="mutations-log"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Preview Modal -->
+        <div class="modal" id="previewModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Form Preview</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="previewForm" class="preview-form">
+                        <!-- Dynamic form content -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="submitPreview" class="btn btn-primary">Submit Form</button>
+                    <button class="btn btn-secondary modal-close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
