@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Scroll List Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Virtual Scroll List Demo</h1>
+            <p>Demonstrating Intersection Observer, Throttling, RAF, and Performance Optimization</p>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="itemCount">Total Items:</label>
+                <input type="number" id="itemCount" value="100000" min="1000" max="1000000" step="1000">
+                <button id="generateBtn">Generate List</button>
+            </div>
+            
+            <div class="control-group">
+                <label for="itemHeight">Item Height (px):</label>
+                <input type="number" id="itemHeight" value="50" min="30" max="200" step="10">
+            </div>
+
+            <div class="control-group">
+                <label for="bufferSize">Buffer Size:</label>
+                <input type="number" id="bufferSize" value="5" min="1" max="20">
+            </div>
+
+            <div class="toggle-group">
+                <label>
+                    <input type="checkbox" id="enableThrottling" checked>
+                    Enable Throttling
+                </label>
+                <label>
+                    <input type="checkbox" id="enableRAF" checked>
+                    Use RequestAnimationFrame
+                </label>
+                <label>
+                    <input type="checkbox" id="enableIntersectionObserver" checked>
+                    Use Intersection Observer
+                </label>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Rendered Items:</span>
+                <span id="renderedCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Scroll Position:</span>
+                <span id="scrollPosition">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">FPS:</span>
+                <span id="fpsCounter">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Memory Usage:</span>
+                <span id="memoryUsage">0 MB</span>
+            </div>
+        </div>
+
+        <div class="scroll-container" id="scrollContainer">
+            <div class="virtual-list" id="virtualList">
+                <div class="spacer-top" id="spacerTop"></div>
+                <div class="visible-items" id="visibleItems"></div>
+                <div class="spacer-bottom" id="spacerBottom"></div>
+            </div>
+        </div>
+
+        <div class="performance-panel">
+            <h3>Performance Metrics</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="metric-label">Scroll Events/sec:</span>
+                    <span id="scrollEventsPerSec">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Render Calls/sec:</span>
+                    <span id="renderCallsPerSec">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">DOM Nodes:</span>
+                    <span id="domNodeCount">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
