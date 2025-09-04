@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactive State System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Reactive State System</h1>
+            <p>Demonstrating Proxy Pattern, Observer Pattern, Dependency Tracking & Closures</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- State Inspector Panel -->
+            <div class="inspector-panel">
+                <h2>State Inspector</h2>
+                
+                <div class="state-viewer">
+                    <h3>Current State</h3>
+                    <pre id="stateDisplay">{}</pre>
+                </div>
+
+                <div class="dependencies-viewer">
+                    <h3>Dependency Graph</h3>
+                    <div id="dependencyGraph" class="dependency-graph"></div>
+                </div>
+
+                <div class="observers-viewer">
+                    <h3>Active Observers</h3>
+                    <div id="observersList" class="observers-list"></div>
+                </div>
+
+                <div class="performance-metrics">
+                    <h3>Performance</h3>
+                    <div class="metric">
+                        <span>State Updates:</span>
+                        <span id="stateUpdates">0</span>
+                    </div>
+                    <div class="metric">
+                        <span>Observer Notifications:</span>
+                        <span id="observerNotifications">0</span>
+                    </div>
+                    <div class="metric">
+                        <span>Computed Recalculations:</span>
+                        <span id="computedRecalcs">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Applications -->
+            <div class="demo-panel">
+                <h2>Interactive Demos</h2>
+                
+                <!-- Counter Demo -->
+                <div class="demo-section">
+                    <h3>Counter Demo (Basic Reactivity)</h3>
+                    <div class="counter-demo">
+                        <div class="counter-display">
+                            <span>Count: </span>
+                            <span id="counterValue">0</span>
+                        </div>
+                        <div class="counter-computed">
+                            <span>Double: </span>
+                            <span id="counterDouble">0</span>
+                        </div>
+                        <div class="counter-computed">
+                            <span>Square: </span>
+                            <span id="counterSquare">0</span>
+                        </div>
+                        <div class="counter-controls">
+                            <button id="incrementBtn">+1</button>
+                            <button id="decrementBtn">-1</button>
+                            <button id="resetBtn">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Todo List Demo -->
+                <div class="demo-section">
+                    <h3>Todo List (Complex State)</h3>
+                    <div class="todo-demo">
+                        <div class="todo-input">
+                            <input type="text" id="todoInput" placeholder="Add a new todo...">
+                            <button id="addTodoBtn">Add</button>
+                        </div>
+                        <div class="todo-stats">
+                            <span>Total: <span id="totalTodos">0</span></span>
+                            <span>Completed: <span id="completedTodos">0</span></span>
+                            <span>Remaining: <span id="remainingTodos">0</span></span>
+                        </div>
+                        <ul id="todoList" class="todo-list"></ul>
+                        <div class="todo-actions">
+                            <button id="clearCompletedBtn">Clear Completed</button>
+                            <button id="toggleAllBtn">Toggle All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shopping Cart Demo -->
+                <div class="demo-section">
+                    <h3>Shopping Cart (Nested Reactivity)</h3>
+                    <div class="cart-demo">
+                        <div class="product-list">
+                            <h4>Products</h4>
+                            <div class="product-grid">
+                                <div class="product-item" data-id="1">
+                                    <span>Laptop - $999</span>
+                                    <button class="add-to-cart" data-id="1" data-name="Laptop" data-price="999">Add to Cart</button>
+                                </div>
+                                <div class="product-item" data-id="2">
+                                    <span>Mouse - $29</span>
+                                    <button class="add-to-cart" data-id="2" data-name="Mouse" data-price="29">Add to Cart</button>
+                                </div>
+                                <div class="product-item" data-id="3">
+                                    <span>Keyboard - $79</span>
+                                    <button class="add-to-cart" data-id="3" data-name="Keyboard" data-price="79">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cart-summary">
+                            <h4>Cart Summary</h4>
+                            <div class="cart-items" id="cartItems"></div>
+                            <div class="cart-totals">
+                                <div>Items: <span id="cartItemCount">0</span></div>
+                                <div>Subtotal: $<span id="cartSubtotal">0.00</span></div>
+                                <div>Tax (10%): $<span id="cartTax">0.00</span></div>
+                                <div class="total">Total: $<span id="cartTotal">0.00</span></div>
+                            </div>
+                            <button id="clearCartBtn">Clear Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Validation Demo -->
+                <div class="demo-section">
+                    <h3>Form Validation (Reactive Validation)</h3>
+                    <div class="form-demo">
+                        <form id="reactiveForm" class="reactive-form">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" placeholder="Enter username">
+                                <div class="validation-message" id="usernameError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" placeholder="Enter email">
+                                <div class="validation-message" id="emailError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" placeholder="Enter password">
+                                <div class="validation-message" id="passwordError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password">
+                                <div class="validation-message" id="confirmPasswordError"></div>
+                            </div>
+                            <div class="form-status">
+                                <span>Form Valid: </span>
+                                <span id="formValid" class="status-indicator">false</span>
+                            </div>
+                            <button type="submit" id="submitBtn" disabled>Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pattern Explanations -->
+            <div class="patterns-panel">
+                <h2>Pattern Demonstrations</h2>
+                
+                <div class="pattern-section">
+                    <h3>🎭 Proxy Pattern</h3>
+                    <div class="pattern-demo">
+                        <p>Intercepts property access and mutations</p>
+                        <div class="code-example">
+                            <pre id="proxyExample">// Live proxy operations will appear here</pre>
+                        </div>
+                        <button id="testProxyBtn">Test Proxy</button>
+                    </div>
+                </div>
+
+                <div class="pattern-section">
+                    <h3>👁️ Observer Pattern</h3>
+                    <div class="pattern-demo">
+                        <p>Notifies subscribers of state changes</p>
+                        <div class="observer-log" id="observerLog">
+                            <!-- Observer notifications will appear here -->
+                        </div>
+                        <button id="testObserverBtn">Test Observer</button>
+                    </div>
+                </div>
+
+                <div class="pattern-section">
+                    <h3>🔗 Dependency Tracking</h3>
+                    <div class="pattern-demo">
+                        <p>Tracks which computeds depend on which state</p>
+                        <div class="dependency-viz" id="dependencyViz">
+                            <!-- Dependency visualization -->
+                        </div>
+                        <button id="testDependencyBtn">Test Dependencies</button>
+                    </div>
+                </div>
+
+                <div class="pattern-section">
+                    <h3>🔒 Closures</h3>
+                    <div class="pattern-demo">
+                        <p>Encapsulates private state and methods</p>
+                        <div class="closure-demo" id="closureDemo">
+                            <!-- Closure demonstrations -->
+                        </div>
+                        <button id="testClosureBtn">Test Closures</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Console -->
+        <div class="debug-console">
+            <div class="console-header">
+                <h3>Debug Console</h3>
+                <button id="clearConsoleBtn">Clear</button>
+            </div>
+            <div class="console-content" id="debugConsole">
+                <div class="console-message">
+                    <span class="timestamp">[00:00:00]</span>
+                    <span class="message">Reactive State System initialized</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
