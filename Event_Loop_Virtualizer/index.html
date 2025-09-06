@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Loop Virtualizer - JavaScript Concurrency Model</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 
+    ========================================
+    EVENT LOOP VIRTUALIZER - UNDERSTANDING JAVASCRIPT CONCURRENCY
+    ========================================
+    
+    This project demonstrates:
+    1. JavaScript Event Loop mechanism
+    2. Call Stack visualization
+    3. Task Queue (Macrotask Queue)
+    4. Microtask Queue
+    5. Web APIs and their async nature
+    6. Concurrency model and non-blocking execution
+    7. Order of execution in different scenarios
+    -->
+    
+    <div class="container">
+        <header class="app-header">
+            <h1>🔄 JavaScript Event Loop Virtualizer</h1>
+            <p>Interactive visualization of JavaScript's concurrency model</p>
+            
+            <div class="controls">
+                <button id="startDemo" class="btn btn-primary">
+                    ▶️ Start Demo
+                </button>
+                <button id="stepDemo" class="btn btn-secondary">
+                    ⏭️ Step Through
+                </button>
+                <button id="resetDemo" class="btn btn-warning">
+                    🔄 Reset
+                </button>
+                <button id="pauseDemo" class="btn btn-danger">
+                    ⏸️ Pause
+                </button>
+            </div>
+        </header>
+
+        <!-- EVENT LOOP VISUALIZATION AREA -->
+        <main class="event-loop-container">
+            
+            <!-- CALL STACK SECTION -->
+            <section class="call-stack-section">
+                <div class="section-header">
+                    <h2>📚 Call Stack</h2>
+                    <div class="info-tooltip" data-info="LIFO (Last In, First Out) - Where function calls are stored and executed">ℹ️</div>
+                </div>
+                <div class="call-stack" id="callStack">
+                    <div class="stack-bottom">Bottom of Stack</div>
+                    <!-- Function calls will be added here dynamically -->
+                </div>
+                <div class="stack-info">
+                    <span id="stackCount">0</span> functions in stack
+                </div>
+            </section>
+
+            <!-- WEB APIs SECTION -->
+            <section class="web-apis-section">
+                <div class="section-header">
+                    <h2>🌐 Web APIs</h2>
+                    <div class="info-tooltip" data-info="Browser-provided APIs that handle async operations outside the main thread">ℹ️</div>
+                </div>
+                <div class="web-apis" id="webApis">
+                    <div class="api-category" id="timers">
+                        <h4>⏰ Timers</h4>
+                        <div class="api-items" id="timerItems"></div>
+                    </div>
+                    <div class="api-category" id="network">
+                        <h4>🌐 Network</h4>
+                        <div class="api-items" id="networkItems"></div>
+                    </div>
+                    <div class="api-category" id="dom">
+                        <h4>🏠 DOM Events</h4>
+                        <div class="api-items" id="domItems"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QUEUES SECTION -->
+            <div class="queues-container">
+                <!-- MICROTASK QUEUE -->
+                <section class="microtask-queue-section">
+                    <div class="section-header">
+                        <h2>⚡ Microtask Queue</h2>
+                        <div class="info-tooltip" data-info="High priority queue for Promises, queueMicrotask(), MutationObserver">ℹ️</div>
+                    </div>
+                    <div class="queue microtask-queue" id="microtaskQueue">
+                        <div class="queue-label">High Priority</div>
+                        <!-- Microtasks will be added here -->
+                    </div>
+                    <div class="queue-info">
+                        <span id="microtaskCount">0</span> microtasks waiting
+                    </div>
+                </section>
+
+                <!-- TASK QUEUE (MACROTASK QUEUE) -->
+                <section class="task-queue-section">
+                    <div class="section-header">
+                        <h2>📋 Task Queue (Macrotasks)</h2>
+                        <div class="info-tooltip" data-info="Queue for setTimeout, setInterval, I/O operations, UI events">ℹ️</div>
+                    </div>
+                    <div class="queue task-queue" id="taskQueue">
+                        <div class="queue-label">Normal Priority</div>
+                        <!-- Tasks will be added here -->
+                    </div>
+                    <div class="queue-info">
+                        <span id="taskCount">0</span> tasks waiting
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- CODE EXAMPLES SECTION -->
+        <section class="code-examples-section">
+            <div class="section-header">
+                <h2>💻 Interactive Code Examples</h2>
+                <p>Click on examples to see how they execute in the event loop</p>
+            </div>
+            
+            <div class="examples-grid">
+                <!-- BASIC SYNCHRONOUS EXAMPLE -->
+                <div class="code-example" data-example="sync">
+                    <h3>🔄 Synchronous Code</h3>
+                    <pre><code>console.log('Start');
+
+function first() {
+    console.log('First');
+}
+
+function second() {
+    console.log('Second');
+}
+
+first();
+second();
+console.log('End');</code></pre>
+                    <button class="run-example btn btn-primary">Run Example</button>
+                </div>
+
+                <!-- SETTIMEOUT EXAMPLE -->
+                <div class="code-example" data-example="setTimeout">
+                    <h3>⏰ setTimeout (Macrotask)</h3>
+                    <pre><code>console.log('Start');
+
+setTimeout(() => {
+    console.log('Timeout 1');
+}, 0);
+
+setTimeout(() => {
+    console.log('Timeout 2');
+}, 0);
+
+console.log('End');</code></pre>
+                    <button class="run-example btn btn-primary">Run Example</button>
+                </div>
+
+                <!-- PROMISE EXAMPLE -->
+                <div class="code-example" data-example="promise">
+                    <h3>⚡ Promises (Microtasks)</h3>
+                    <pre><code>console.log('Start');
+
+Promise.resolve().then(() => {
+    console.log('Promise 1');
+});
+
+Promise.resolve().then(() => {
+    console.log('Promise 2');
+});
+
+console.log('End');</code></pre>
+                    <button class="run-example btn btn-primary">Run Example</button>
+                </div>
+
+                <!-- MIXED ASYNC EXAMPLE -->
+                <div class="code-example" data-example="mixed">
+                    <h3>🎭 Mixed Async Operations</h3>
+                    <pre><code>console.log('Start');
+
+setTimeout(() => {
+    console.log('Timeout');
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log('Promise');
+});
+
+console.log('End');</code></pre>
+                    <button class="run-example btn btn-primary">Run Example</button>
+                </div>
+
+                <!-- COMPLEX NESTED EXAMPLE -->
+                <div class="code-example" data-example="complex">
+                    <h3>🌀 Complex Nested Operations</h3>
+                    <pre><code>console.log('Start');
+
+setTimeout(() => {
+    console.log('Timeout 1');
+    Promise.resolve().then(() => {
+        console.log('Promise in Timeout');
+    });
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log('Promise 1');
+    setTimeout(() => {
+        console.log('Timeout in Promise');
+    }, 0);
+});
+
+console.log('End');</code></pre>
+                    <button class="run-example btn btn-primary">Run Example</button>
+                </div>
+
+                <!-- FETCH EXAMPLE -->
+                <div class="code-example" data-example="fetch">
+                    <h3>🌐 Fetch API (Network)</h3>
+                    <pre><code>console.log('Start');
+
+fetch('/api/data')
+    .then(response => response.json())
+    .then(data => {
+        console.log('Data received');
+    });
+
+console.log('Request sent');
+console.log('End');</code></pre>
+                    <button class="run-example btn btn-primary">Run Example</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXECUTION LOG -->
+        <section class="execution-log-section">
+            <div class="section-header">
+                <h2>📝 Execution Log</h2>
+                <button id="clearLog" class="btn btn-small">Clear Log</button>
+            </div>
+            <div class="execution-log" id="executionLog">
+                <div class="log-placeholder">Run an example to see the execution order...</div>
+            </div>
+        </section>
+
+        <!-- CONCEPTS EXPLANATION -->
+        <section class="concepts-section">
+            <div class="section-header">
+                <h2>🎓 Key Concepts Explained</h2>
+            </div>
+            
+            <div class="concepts-grid">
+                <div class="concept-card">
+                    <h3>🔄 Event Loop</h3>
+                    <p>The event loop is JavaScript's mechanism for handling asynchronous operations. It continuously checks the call stack and queues to determine what to execute next.</p>
+                    
+                    <h4>How it works:</h4>
+                    <ol>
+                        <li>Execute all synchronous code in the call stack</li>
+                        <li>When call stack is empty, check microtask queue</li>
+                        <li>Execute all microtasks</li>
+                        <li>Take one task from task queue</li>
+                        <li>Repeat the process</li>
+                    </ol>
+                </div>
+
+                <div class="concept-card">
+                    <h3>📚 Call Stack</h3>
+                    <p>A LIFO (Last In, First Out) data structure that keeps track of function calls. JavaScript is single-threaded, so only one function can execute at a time.</p>
+                    
+                    <h4>Characteristics:</h4>
+                    <ul>
+                        <li>Synchronous execution</li>
+                        <li>Blocking operations</li>
+                        <li>Stack overflow when too deep</li>
+                        <li>Function context storage</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h3>⚡ Microtask Queue</h3>
+                    <p>High-priority queue for Promise callbacks, queueMicrotask(), and MutationObserver callbacks. Always processed before macrotasks.</p>
+                    
+                    <h4>Sources:</h4>
+                    <ul>
+                        <li>Promise.then/catch/finally</li>
+                        <li>queueMicrotask()</li>
+                        <li>MutationObserver</li>
+                        <li>async/await continuations</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h3>📋 Task Queue (Macrotasks)</h3>
+                    <p>Queue for larger async operations like timers, I/O, and UI events. Processed after all microtasks are complete.</p>
+                    
+                    <h4>Sources:</h4>
+                    <ul>
+                        <li>setTimeout/setInterval</li>
+                        <li>I/O operations</li>
+                        <li>UI events (click, scroll)</li>
+                        <li>MessageChannel</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h3>🌐 Web APIs</h3>
+                    <p>Browser-provided APIs that handle async operations outside the main JavaScript thread, preventing blocking.</p>
+                    
+                    <h4>Examples:</h4>
+                    <ul>
+                        <li>DOM APIs</li>
+                        <li>Fetch API</li>
+                        <li>Geolocation</li>
+                        <li>File System APIs</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h3>🔀 Concurrency Model</h3>
+                    <p>JavaScript uses a single-threaded, non-blocking concurrency model with an event-driven architecture.</p>
+                    
+                    <h4>Key Features:</h4>
+                    <ul>
+                        <li>Single-threaded execution</li>
+                        <li>Non-blocking I/O</li>
+                        <li>Event-driven architecture</li>
+                        <li>Cooperative multitasking</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PERFORMANCE INSIGHTS -->
+        <section class="performance-section">
+            <div class="section-header">
+                <h2>⚡ Performance Insights</h2>
+            </div>
+            
+            <div class="performance-grid">
+                <div class="insight-card">
+                    <h3>🚫 Blocking Operations</h3>
+                    <p>Long-running synchronous code blocks the entire application:</p>
+                    <pre><code>// BAD: Blocks the main thread
+for (let i = 0; i < 1000000000; i++) {
+    // Heavy computation
+}
+
+// GOOD: Non-blocking with Web Workers
+const worker = new Worker('heavy-task.js');</code></pre>
+                </div>
+
+                <div class="insight-card">
+                    <h3>⚡ Microtask Starvation</h3>
+                    <p>Too many microtasks can starve macrotasks:</p>
+                    <pre><code>// BAD: Infinite microtask loop
+function recursiveMicrotask() {
+    Promise.resolve().then(recursiveMicrotask);
+}
+
+// GOOD: Use setTimeout for yielding
+function yieldingTask() {
+    setTimeout(yieldingTask, 0);
+}</code></pre>
+                </div>
+
+                <div class="insight-card">
+                    <h3>🎯 Optimal Patterns</h3>
+                    <p>Best practices for event loop performance:</p>
+                    <ul>
+                        <li>Break large tasks into smaller chunks</li>
+                        <li>Use requestAnimationFrame for animations</li>
+                        <li>Prefer async/await over callback hell</li>
+                        <li>Batch DOM operations</li>
+                        <li>Use Web Workers for heavy computation</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ SECTION -->
+        <section class="quiz-section">
+            <div class="section-header">
+                <h2>🧠 Test Your Understanding</h2>
+            </div>
+            
+            <div class="quiz-container" id="quizContainer">
+                <div class="quiz-question" id="currentQuestion">
+                    <h3>Question 1: What executes first?</h3>
+                    <pre><code>console.log('A');
+setTimeout(() => console.log('B'), 0);
+Promise.resolve().then(() => console.log('C'));
+console.log('D');</code></pre>
+                    
+                    <div class="quiz-options">
+                        <button class="quiz-option" data-answer="wrong">A, B, C, D</button>
+                        <button class="quiz-option" data-answer="correct">A, D, C, B</button>
+                        <button class="quiz-option" data-answer="wrong">A, C, D, B</button>
+                        <button class="quiz-option" data-answer="wrong">B, C, A, D</button>
+                    </div>
+                    
+                    <div class="quiz-explanation" style="display: none;">
+                        <p><strong>Correct!</strong> Synchronous code (A, D) executes first, then microtasks (C), then macrotasks (B).</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-controls">
+                <button id="nextQuestion" class="btn btn-primary" style="display: none;">Next Question</button>
+                <button id="restartQuiz" class="btn btn-secondary" style="display: none;">Restart Quiz</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- FLOATING HELP PANEL -->
+    <div class="help-panel" id="helpPanel">
+        <button class="help-toggle" id="helpToggle">❓ Help</button>
+        <div class="help-content">
+            <h3>🎯 How to Use</h3>
+            <ul>
+                <li><strong>Run Examples:</strong> Click "Run Example" to see execution flow</li>
+                <li><strong>Step Through:</strong> Use "Step Through" for detailed analysis</li>
+                <li><strong>Watch Queues:</strong> Observe how tasks move through queues</li>
+                <li><strong>Hover Tooltips:</strong> Hover over ℹ️ icons for explanations</li>
+                <li><strong>Take Quiz:</strong> Test your understanding at the bottom</li>
+            </ul>
+            
+            <h3>🔄 Execution Order</h3>
+            <ol>
+                <li>Synchronous code (Call Stack)</li>
+                <li>All Microtasks (Promises, etc.)</li>
+                <li>One Macrotask (setTimeout, etc.)</li>
+                <li>Render (if needed)</li>
+                <li>Repeat from step 2</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
