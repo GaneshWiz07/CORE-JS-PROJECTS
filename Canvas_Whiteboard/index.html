@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Whiteboard - Custom Hooks & Command Pattern</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎨 Canvas Whiteboard</h1>
+            <p>Demonstrating Custom Hooks, Command Pattern, Stacks & State Snapshoting</p>
+        </header>
+
+        <div class="toolbar">
+            <div class="tool-group">
+                <label>Brush Size:</label>
+                <input type="range" id="brushSize" min="1" max="50" value="5">
+                <span id="brushSizeValue">5px</span>
+            </div>
+            
+            <div class="tool-group">
+                <label>Color:</label>
+                <input type="color" id="colorPicker" value="#000000">
+            </div>
+            
+            <div class="tool-group">
+                <button id="undoBtn" class="btn btn-secondary">↶ Undo</button>
+                <button id="redoBtn" class="btn btn-secondary">↷ Redo</button>
+            </div>
+            
+            <div class="tool-group">
+                <button id="clearBtn" class="btn btn-danger">🗑️ Clear</button>
+                <button id="saveBtn" class="btn btn-primary">💾 Save</button>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="whiteboard" width="1200" height="600"></canvas>
+            <div class="canvas-info">
+                <div class="info-item">
+                    <span>Commands: <span id="commandCount">0</span></span>
+                </div>
+                <div class="info-item">
+                    <span>Undo Stack: <span id="undoCount">0</span></span>
+                </div>
+                <div class="info-item">
+                    <span>Redo Stack: <span id="redoCount">0</span></span>
+                </div>
+                <div class="info-item">
+                    <span>State Size: <span id="stateSize">0 KB</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hooks-panel">
+            <h3>🪝 Active Custom Hooks</h3>
+            <div class="hooks-list" id="hooksList">
+                <!-- Hooks will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>📋 Features Demonstrated</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎯 Command Pattern</h4>
+                    <p>Each drawing action is encapsulated as a command with execute/undo methods</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📚 Stacks</h4>
+                    <p>Undo/Redo functionality using stack data structures</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎨 Canvas API</h4>
+                    <p>Direct manipulation of HTML5 Canvas for drawing operations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📸 State Snapshoting</h4>
+                    <p>Capturing and restoring canvas states for undo/redo</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🪝 Custom Hooks</h4>
+                    <p>Reusable state and effect management without frameworks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/hooks.js"></script>
+    <script src="js/commands.js"></script>
+    <script src="js/canvas-manager.js"></script>
+    <script src="js/whiteboard.js"></script>
+</body>
+</html>
