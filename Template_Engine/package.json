@@ -1,0 +1,30 @@
+{
+  "name": "custom-template-engine",
+  "version": "1.0.0",
+  "description": "A custom template engine demonstrating Regex Parsing, Tokenization, Abstract Syntax Tree, and Scope Handling",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node examples/demo.js",
+    "test": "node test/test.js",
+    "benchmark": "node benchmark/performance.js"
+  },
+  "keywords": [
+    "template-engine",
+    "regex-parsing",
+    "tokenization",
+    "ast",
+    "scope-handling",
+    "compiler",
+    "javascript"
+  ],
+  "author": "Template Engine Demo",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title | default:'Template Engine Demo' }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f0f0f0; padding: 20px; border-radius: 5px; }
+        .content { margin: 20px 0; }
+        .footer { border-top: 1px solid #ccc; padding-top: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ title | upper }}</h1>
+        <p>Welcome {{ user.name | default:'Guest' }}!</p>
+        {% if user.isLoggedIn %}
+            <p>Last login: {{ user.lastLogin | date:'YYYY-MM-DD HH:mm' }}</p>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        {% if posts %}
+            <h2>Recent Posts ({{ posts | len }})</h2>
+            {% for post in posts %}
+                <article>
+                    <h3>{{ post.title }}</h3>
+                    <p><small>By {{ post.author }} on {{ post.date | date:'MM/DD/YYYY' }}</small></p>
+                    <p>{{ post.excerpt | truncate:150 }}</p>
+                    {% if post.tags %}
+                        <p><strong>Tags:</strong> {{ post.tags | join:', ' }}</p>
+                    {% endif %}
+                </article>
+                {% if not loop.last %}<hr>{% endif %}
+            {% endfor %}
+        {% else %}
+            <p>No posts available.</p>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>&copy; {{ now() | date:'YYYY' }} {{ siteName | default:'My Website' }}. All rights reserved.</p>
+    </div>
+</body>
+</html>
