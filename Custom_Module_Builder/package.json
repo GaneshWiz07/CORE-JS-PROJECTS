@@ -1,0 +1,36 @@
+{
+  "name": "custom-module-builder",
+  "version": "1.0.0",
+  "description": "A custom module builder demonstrating FileSystem API, Path API, Recursion, and Dependency Graphs",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "module-builder": "./bin/cli.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "node bin/cli.js",
+    "test": "node test/test.js",
+    "demo": "node examples/demo.js"
+  },
+  "keywords": [
+    "module-builder",
+    "bundler",
+    "dependency-graph",
+    "filesystem",
+    "recursion",
+    "nodejs"
+  ],
+  "author": "Module Builder Demo",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
